@@ -117,7 +117,7 @@ def printStickerCarousel(event, altText, carouselColumnArray):
 
 def answerPig(**param):
     event = param['event']
-    printTextMessage(event, '불러또?')
+    printTextMessage(event, 'juga disebut?')
 
 def actEvent(command, **param):
     actDispatcher[command](**param)
@@ -157,10 +157,10 @@ def buildCarouselList(liList):
             CarouselColumn(
                 thumbnail_image_url=thumbnail_image_url,
                 title=title,
-                text='살려줘',
+                text='Membantu!',
                 actions=[
                     URITemplateAction(
-                        label='보기',
+                        label='melihat',
                         uri=href
                     )
                 ]
@@ -172,7 +172,7 @@ def answerStickerWithCarousel(**param):
     event = param['event']
     liList = parseHtml()
     carouselColumnArray = buildCarouselList(liList)
-    printStickerCarousel(event, 'PC에서는 볼수없또', carouselColumnArray)
+    printStickerCarousel(event, 'PC Terlihat eoptto', carouselColumnArray)
 
 def answerStickerRemoveCarousel(**param):
     event = param['event']
@@ -190,7 +190,7 @@ def answerStickerRemoveCarousel(**param):
 
     # targetIdx 가 -1 이면 리턴(삭제할 대상이 없음)
     if targetIdx == -1:
-        printTextMessage(event, '지울 게 없또!')
+        printTextMessage(event, 'Aku dibersihkan eoptto!')
         return
 
     stickerList.pop(targetIdx)
@@ -198,7 +198,7 @@ def answerStickerRemoveCarousel(**param):
 
     # save custom sticker in firebase. use patch and add last slash to remove unique number
     firebase.patch('/customSticker/' + alias + '/', aliasInfo)
-    printTextMessage(event, '스티커가 ' + alias + '에서 지오져또..')
+    printTextMessage(event, 'Stiker ' + alias + 'Geo di jyeotto..')
 
 def buildSavedStickerInfoCarousel(aliasInfo, alias):
     stickerList = aliasInfo.get('list')
@@ -217,7 +217,7 @@ def buildSavedStickerInfoCarousel(aliasInfo, alias):
                 text=str(idx),
                 actions=[
                     MessageTemplateAction(
-                        label='지우기',
+                        label='jelas',
                         text='@stk.remove '+alias+ ' '+ packageId + ' ' + stickerId
                     )
                 ]
@@ -240,24 +240,24 @@ def answerStickerList(**param):
         aliasInfo = firebase.get('/customSticker', alias)
 
         if aliasInfo is None:
-            printTextMessage(event, '그런거 없또')
+            printTextMessage(event, 'Geureongeo eoptto')
             return
         
         carouselColumnArray = buildSavedStickerInfoCarousel(aliasInfo, alias)
-        printStickerCarousel(event, 'PC에서는 볼수없또', carouselColumnArray)               
+        printStickerCarousel(event, 'PCTerlihat eoptto', carouselColumnArray)               
 
     return
 
 def validateStickAdd(stickerList, newStickerInfo, event):
     # 하나의 키워드마다 스티커 저장 개수 벨리데이션
     if len(stickerList)>=5 :
-        printTextMessage(event, '스티커는 5개 넘게 저장할 수 없또')
+        printTextMessage(event, 'Stiker dapat disimpan selama lebih dari lima eoptto')
         return False
 
     # 이미 있는 스티커면 무시
     for stickerInfo in stickerList:
         if stickerInfo.get('packageId')==newStickerInfo.get('packageId') and stickerInfo.get('stickerId')==newStickerInfo.get('stickerId'):
-            printTextMessage(event, '이미 그렇게 등록되어있또')
+            printTextMessage(event, 'Hal ini sudah ittto terdaftar')
             return False
         
     return True
@@ -289,7 +289,7 @@ def answerStickAdd(**param):
 
     # save custom sticker in firebase. use patch and add last slash to remove unique number
     firebase.patch('/customSticker/' + alias + '/', aliasInfo)
-    printTextMessage(event, '스티커가 ' + alias + '로 저장되어또!!!')
+    printTextMessage(event, 'Stiker ' + alias + 'Juga disimpan dalam !!!')
 
 def answerSticker(**param):
     event = param['event']
@@ -315,7 +315,7 @@ def answerSticker(**param):
 
 def answerHappyNewYear(**param):
     event = param['event']
-    printTextMessage(event, "고마오 닝겐들아!! 새해 복 많이 받고 올해는 꼭 탈때지해야돼얌!")
+    printTextMessage(event, "Ye dan Mao Groningen! Menjadi Tahun Baru dwaeyam perlu belum tentu tahun talttae!")
 
 def findCommandIdx(tokens):
     for idx, token in enumerate(tokens):
@@ -325,16 +325,16 @@ def findCommandIdx(tokens):
     return None
 
 actDispatcher = {
-    '돼지야' : answerPig,
+    'Kucing' : answerCat,
     'stk.call' : answerStickerMessgae,
     'stk.img' : answerStickerImage,
-    '스티커' : answerStickerWithCarousel,
+    'stiker' : answerStickerWithCarousel,
     'stk.remove' : answerStickerRemoveCarousel,
     'stk.list' : answerStickerList,
     'stk.add' : answerStickAdd,
     'stk' : answerSticker,
     # 새해 기념 추가 이벤트
-    '새해복많이받아~돼지야' : answerHappyNewYear
+    'Mengambil banyak' : answerHappyNewYear
 }
 
 @app.route("/callback", methods=['POST'])
